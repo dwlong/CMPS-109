@@ -11,6 +11,10 @@ with the input. What makes ydc unique is it utilizes the bigint
 class which has no limits to length of numbers (number of
 digits).
 
+I added a couple lines to the main.cpp to prevent seg faults
+when there is no stack and certain functions are called
+(namely print and duplicate).
+
 
 
 Usage:
@@ -34,3 +38,4 @@ Operations include:
       from the bottom).
    p Print. Prints the top number on the stack.
    q Quit. Quits the ydc program.
+
