@@ -1,4 +1,7 @@
 // $Id: libfns.cpp,v 1.4 2015-07-03 14:46:41-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include "libfns.h"
 

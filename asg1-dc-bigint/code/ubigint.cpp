@@ -1,4 +1,7 @@
 // $Id: ubigint.cpp,v 1.8 2015-07-03 14:46:41-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <cstdlib>
 #include <exception>
@@ -98,7 +101,6 @@ void ubigint::divide_by_2() {
    this->trim();
 }
 
-
 ubigint::quot_rem ubigint::divide (const ubigint& that) const {
    static const ubigint zero = 0;
    if (that == zero) throw domain_error ("ubigint::divide: by 0");

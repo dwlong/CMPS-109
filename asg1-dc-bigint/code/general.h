@@ -1,4 +1,7 @@
 // $Id: general.h,v 1.5 2015-07-08 12:32:13-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 //
 // general -
@@ -41,7 +44,6 @@ const string octal (numeric number) {
    return stream.str();
 }
 
-
 //
 // main -
 //    Keep track of execname and exit status.  Must be initialized

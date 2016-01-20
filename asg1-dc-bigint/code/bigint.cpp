@@ -1,4 +1,7 @@
 // $Id: bigint.cpp,v 1.73 2015-07-03 14:46:41-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <cstdlib>
 #include <exception>
@@ -86,7 +89,6 @@ bigint bigint::operator* (const bigint& that) const {
    return result;
 }
 
-
 bigint bigint::operator/ (const bigint& that) const {
    bigint result = uvalue / that.uvalue;
    if (is_negative == that.is_negative)

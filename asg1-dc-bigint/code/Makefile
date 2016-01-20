@@ -1,4 +1,7 @@
 # $Id: Makefile,v 1.17 2015-07-02 15:52:45-07 - - $
+# James Garbagnati
+# jgarbagn
+# 1354722
 
 MKFILE      = Makefile
 DEPFILE     = ${MKFILE}.dep

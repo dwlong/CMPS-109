@@ -1,4 +1,7 @@
 // $Id: general.cpp,v 1.5 2015-07-08 12:32:13-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <cstring>
 using namespace std;

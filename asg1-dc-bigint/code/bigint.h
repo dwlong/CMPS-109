@@ -1,4 +1,7 @@
 // $Id: bigint.h,v 1.28 2015-07-03 14:46:41-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #ifndef __BIGINT_H__
 #define __BIGINT_H__

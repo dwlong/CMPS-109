@@ -1,4 +1,7 @@
 // $Id: main.cpp,v 1.49 2016-01-13 13:35:41-08 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <cassert>
 #include <deque>
@@ -89,7 +92,6 @@ fn_hash do_functions = {
    {"q", do_quit},
 };
 
-
 //
 // scan_options
 //    Options analysis:  The only option is -Dflags. 
@@ -114,7 +116,6 @@ void scan_options (int argc, char** argv) {
    }
 }
 
-
 //
 // Main function.
 //

@@ -1,4 +1,7 @@
 // $Id: debug.cpp,v 1.6 2015-07-02 16:48:18-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <climits>
 #include <iostream>
