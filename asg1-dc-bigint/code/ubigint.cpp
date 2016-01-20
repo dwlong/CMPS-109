@@ -17,13 +17,15 @@ ubigint::ubigint (unsigned long that) {
 }
 
 ubigint::ubigint (const string& that) {
-   auto itor = ubig_value.begin();
-   for (char digit: that) ubig_value.insert(itor, digit - '0');
+   for (char digit: that) {
+      auto itor = ubig_value.begin();
+      ubig_value.insert(itor, digit - '0');
+   }
 }
 
 ubigint ubigint::operator+ (const ubigint& that) const {
    ubigint output;
-   udigit_t carry = 0;
+   int carry = 0;
    int this_size = ubig_value.size();
    int that_size = that.ubig_value.size();
    int size = (this_size > that_size)? 
@@ -31,11 +33,11 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    
    for (int i = 0; i < size; ++i) {
       // Grab either the indexed digit or 0 if OOB
-      udigit_t this_dig = (i < this_size)? 
+      int this_dig = (i < this_size)? 
                               ubig_value[i]: 0;
-      udigit_t that_dig = (i < that_size)? 
+      int that_dig = (i < that_size)? 
                               that.ubig_value[i]: 0;
-      udigit_t temp = this_dig + that_dig + carry;
+      int temp = this_dig + that_dig + carry;
       output.ubig_value.push_back(temp % 10);
       carry = temp / 10;
    }
@@ -49,7 +51,7 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 ubigint ubigint::operator- (const ubigint& that) const {
    if (*this < that) throw domain_error ("ubigint::operator-(a<b)");
    ubigint output;
-   udigit_t borrow = 0;
+   int borrow = 0;
    int size = ubig_value.size();
    int that_size = that.ubig_value.size();
    
@@ -73,10 +75,10 @@ ubigint ubigint::operator* (const ubigint& that) const {
 }
 
 void ubigint::multiply_by_2() {
-   udigit_t carry = 0;
+   int carry = 0;
    int size = ubig_value.size();
    for (int i = 0; i < size; ++i) {
-      udigit_t temp = ubig_value[i] * 2;
+      int temp = ubig_value[i] * 2;
       ubig_value[i] = temp % 10 + carry;
       carry = temp / 10; // set the carry
    }
@@ -85,10 +87,10 @@ void ubigint::multiply_by_2() {
 }
 
 void ubigint::divide_by_2() {
-   udigit_t carry = 0;
+   int carry = 0;
    int size = ubig_value.size();
    for (int i = size - 1; i >= 0; --i) {
-      udigit_t temp = ubig_value[i];
+      int temp = ubig_value[i];
       ubig_value[i] = (carry + temp) / 2;
       carry = temp % 2 * 10;
    }
@@ -162,8 +164,12 @@ bool ubigint::operator< (const ubigint& that) const {
 
 ostream& operator<< (ostream& out, const ubigint& that) { 
    out << "ubigint(";
-   for (int i = that.ubig_value.size() - 1; i >= 0; --i)
-      out << that.ubig_value[i] + '0' << ", ";
+   for (int i = that.ubig_value.size() - 1; i >= 0; --i) {
+      char temp = that.ubig_value[i] + '0';
+      out << temp;
+      if (i > 0)
+         out << ", ";
+   }
    
    return out << ")";
 }
