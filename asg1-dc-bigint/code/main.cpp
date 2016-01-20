@@ -59,7 +59,6 @@ void do_dup (bigint_stack& stack, const char) {
 }
 
 void do_printall (bigint_stack& stack, const char) {
-   if (stack.size() < 1) throw ydc_exn ("stack empty");
    for (const auto &elem: stack) cout << elem << endl;
 }
 

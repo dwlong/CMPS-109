@@ -165,15 +165,12 @@ bool ubigint::operator< (const ubigint& that) const {
 }
 
 ostream& operator<< (ostream& out, const ubigint& that) { 
-   out << "ubigint(";
    for (int i = that.ubig_value.size() - 1; i >= 0; --i) {
       char temp = that.ubig_value[i] + '0';
       out << temp;
-      if (i > 0)
-         out << ", ";
    }
    
-   return out << ")";
+   return out;
 }
 
 void ubigint::trim() {
