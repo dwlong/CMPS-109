@@ -63,7 +63,7 @@ bool bigint::operator== (const bigint& that) const {
 
 bool bigint::operator< (const bigint& that) const {
    if (is_negative != that.is_negative) return is_negative;
-   return is_negative ? uvalue > that.uvalue
+   return is_negative ? that.uvalue < uvalue
                       : uvalue < that.uvalue;
 }
 
