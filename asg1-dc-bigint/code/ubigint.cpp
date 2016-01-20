@@ -10,12 +10,10 @@ using namespace std;
 #include "debug.h"
 
 ubigint::ubigint (unsigned long that) {
-   if (that == 0)
-      this->ubig_value.push_back(0);
-   while(that > 0) {
+   do {
       this->ubig_value.push_back(that % 10);
       that = that / 10;
-   }
+   } while(that > 0);
 }
 
 ubigint::ubigint (const string& that) {
