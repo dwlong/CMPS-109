@@ -1,0 +1,36 @@
+James Garbagnati
+jgarbagn@ucsc.edu
+1354722
+
+asg1-dc-bigint
+
+The ydc executable attempts to replicate the UNIX dc function
+(desktop calculator). It reads in RPN formatted numbers and
+operations (ex: "1 1 +" is "1 + 1"), and performs calculations
+with the input. What makes ydc unique is it utilizes the bigint
+class which has no limits to length of numbers (number of
+digits).
+
+
+
+Usage:
+   Type "ydc" in the shell.
+
+Operations include:
+   + Addition. Adds the top two numbers on the stack.
+   - Subtraction. Subtracts the top number on the stack from
+      the next item from the stack.
+   * Multiplication. Multiplies the top two numbers on the
+      stack.
+   / Division. Divides the second number on the stack by the
+      top number on the stack.
+   % Modulus. Takes the modulus of the second number on the
+      stack by the top number on the stack.
+   ^ Pow function. Outputs the second top number on the stack
+      to the power of the top number of the stack.
+   c Clear. Clears the stack.
+   d Duplicate. Duplicate number on the top of the stack.
+   f Print all. Prints the entire stack, one by one (starting
+      from the bottom).
+   p Print. Prints the top number on the stack.
+   q Quit. Quits the ydc program.
