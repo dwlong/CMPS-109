@@ -46,22 +46,25 @@ void do_arith (bigint_stack& stack, const char oper) {
 }
 
 void do_clear (bigint_stack& stack, const char) {
+   if (stack.size() < 1) throw ydc_exn ("stack empty");
    DEBUGF ('d', "");
    stack.clear();
 }
 
-
 void do_dup (bigint_stack& stack, const char) {
+   if (stack.size() < 1) throw ydc_exn ("stack empty");
    bigint top = stack.top();
    DEBUGF ('d', top);
    stack.push (top);
 }
 
 void do_printall (bigint_stack& stack, const char) {
+   if (stack.size() < 1) throw ydc_exn ("stack empty");
    for (const auto &elem: stack) cout << elem << endl;
 }
 
 void do_print (bigint_stack& stack, const char) {
+   if (stack.size() < 1) throw ydc_exn ("stack empty");
    cout << stack.top() << endl;
 }
 
