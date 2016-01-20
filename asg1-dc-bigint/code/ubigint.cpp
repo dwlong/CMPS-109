@@ -74,7 +74,25 @@ ubigint ubigint::operator- (const ubigint& that) const {
 }
 
 ubigint ubigint::operator* (const ubigint& that) const {
-   return ubigint(0);
+   ubigint output;
+   int this_size = ubig_value.size();
+   int that_size = that.ubig_value.size();
+   output.ubig_value = vector<udigit_t>(this_size + that_size, 0);
+   int carry;
+   for (int i = 0; i < this_size; ++i) {
+      carry = 0;
+      for (int j = 0; j < that_size; ++j) {
+         int temp = output.ubig_value[i+j] 
+                  + (ubig_value[i] * that.ubig_value[j])
+                  + carry;
+         output.ubig_value[i+j] = temp % 10;
+         carry = temp / 10;
+      }
+      output.ubig_value[i+that_size] = carry;
+   }
+   
+   output.trim();
+   return output;
 }
 
 void ubigint::multiply_by_2() {
