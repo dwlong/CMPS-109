@@ -59,7 +59,9 @@ class inode_state {
       string pwd(inode_ptr);
       void ls(inode_state&, inode_ptr, bool);
       inode_ptr find(const string&, const int&);
+      inode_ptr find_parent(const string&, const int&);
       void cd(const string&);
+      void rm(inode_ptr, const string&, const bool&);
 };
 
 // class inode -

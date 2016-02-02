@@ -58,25 +58,21 @@ void fn_cat (inode_state& state, const wordvec& words){
       try {
          inode_ptr node = state.find(*itor, 0);
          base_file_ptr file = node->get_contents();
-         if(file != nullptr) {
-            if(node->is_plain()) {
-               wordvec content(file->readfile());
-               if(content.size() == 1) {
-                  cout << content.at(0);
-               } else if(content.size() > 1) {
-                  string last_word = content.back();
-                  content.pop_back();
-                  for(auto const& word: content) {
-                     cout << word << " ";
-                  }
-                  cout << last_word;
+         if(node->is_plain()) {
+            wordvec content(file->readfile());
+            if(content.size() == 1) {
+               cout << content.at(0);
+            } else if(content.size() > 1) {
+               string last_word = content.back();
+               content.pop_back();
+               for(auto const& word: content) {
+                  cout << word << " ";
                }
-               cout << endl;
-            } else {
-               throw command_error("cat: directory given");
+               cout << last_word;
             }
+            cout << endl;
          } else {
-            throw command_error("cat: path invalid");
+            throw command_error("cat: directory given");
          }
       } catch(file_error& error) {
          complain() << error.what() << endl;
@@ -117,7 +113,7 @@ void fn_exit (inode_state& state, const wordvec& words){
    throw ysh_exit();
 }
 
-void ls (inode_state& state, const wordvec& words, bool recur) {
+void ls (inode_state& state, const wordvec& words, const bool& recur) {
    if(words.size() == 1) {
       // Print current directory:
       state.ls(state, state.get_cwd(), recur);
@@ -127,14 +123,10 @@ void ls (inode_state& state, const wordvec& words, bool recur) {
              itor != words.end(); ++itor) {
          try {
             inode_ptr node = state.find(*itor, 0);
-            if(node != nullptr) {
-               if(node->is_dir())
-                  state.ls(state, node, recur);
-               else
-                  throw command_error("ls: file given");
-            } else {
-               throw command_error("ls: path invalid");
-            }
+            if(node->is_dir())
+               state.ls(state, node, recur);
+            else
+               throw command_error("ls: file given");
          } catch (file_error& error) {
             complain() << error.what() << endl;
          }
@@ -220,12 +212,37 @@ void fn_pwd (inode_state& state, const wordvec& words){
    DEBUGF ('c', words);
 }
 
+void rm (inode_state& state, const wordvec& words, const bool& recur) {
+   if(words.size() == 1)
+      throw command_error("rm: no path specified");
+   if(words.size() > 2)
+      throw command_error("rm: too many arguments");
+   
+   try {
+      inode_ptr node = state.find(words.at(1), 0);
+      base_file_ptr dir = node->get_contents();
+      if((!recur && (node->is_dir() && dir->size() == 2))
+         || node->is_plain()) {
+         wordvec path = split(words.at(1), "/");
+         node = state.find_parent(words.at(1), 0);
+         state.rm(node, path.back(), recur);
+      } else
+         throw command_error("rm: directory not empty");
+   } catch (file_error& error) {
+      complain() << error.what() << endl;
+   }
+}
+
 void fn_rm (inode_state& state, const wordvec& words){
+   rm(state, words, false);
+   
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
 void fn_rmr (inode_state& state, const wordvec& words){
+   rm(state, words, true);
+   
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }

@@ -92,6 +92,33 @@ inode_ptr inode_state::find(const string& dir,
    return curr;
 }
 
+inode_ptr inode_state::find_parent(const string& dir,
+                                   const int& new_node) {
+   if(dir == "/")
+      return root;
+
+   inode_ptr curr = cwd;
+   wordvec file_path = split(dir, "/");
+   inode_ptr parent = curr;
+   string last = "";
+   for(auto itor = file_path.begin();
+         itor != file_path.end() - new_node; ++itor) {
+      if(!curr->is_dir())
+         throw file_error(*itor + " is not a directory");
+
+      base_file_ptr dir = curr->get_contents();
+      if(!dir->has_dirent(*itor))
+         throw file_error(*itor + " does not exist");
+      parent = curr;
+      curr = dir->get_dirent(*itor);
+      last = *itor;
+   }
+   
+   if(new_node && !curr->is_dir())
+      throw file_error(last + " is not a directory");
+   return parent;
+}
+
 void inode_state::cd(const string& path) {
    if(path == "/") {
       cwd = root;
@@ -106,16 +133,32 @@ void inode_state::cd(const string& path) {
    cwd = node;
 }
 
+void inode_state::rm(inode_ptr par, const string& path, 
+                     const bool& recur) {
+   base_file_ptr dir = par->get_contents();
+   inode_ptr curr = dir->get_dirent(path);
+
+   if(recur) {
+      
+   }
+   if(curr != root) {
+      if(curr->is_plain()) {
+         base_file_ptr parent = par->get_contents();
+         parent->remove(path);
+      }
+   }
+}
+
 
 
 void inode_state::set_prompt(const string& prompt) { 
-  prompt_ = prompt;
+   prompt_ = prompt;
 }
 void inode_state::set_root(inode_ptr newroot) { 
-  root = newroot;
+   root = newroot;
 }
 void inode_state::set_cwd(inode_ptr newcwd) { 
-  cwd = newcwd;
+   cwd = newcwd;
 }
 
 
@@ -171,6 +214,13 @@ file_error::file_error (const string& what):
 
 size_t plain_file::size() const {
    size_t size {0};
+   if(data.size() > 0) {
+      for(auto const word: data) {
+         // Add 1 for spaces
+         size += word.length() + 1;
+      }
+      --size; // For last word's lack of space
+   }
    DEBUGF ('i', "size = " << size);
    return size;
 }
@@ -243,6 +293,7 @@ void directory::writefile (const wordvec&) {
 }
 
 void directory::remove (const string& filename) {
+   dirents.erase(filename);
    DEBUGF ('i', filename);
 }
 

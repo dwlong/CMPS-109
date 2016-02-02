@@ -1,0 +1,50 @@
+James Garbagnati
+jgarbagn
+1354722
+
+asg2-shell-fnptrs-oop
+
+yshell
+
+This is a simple shell program that creates and
+manages a small, tree file-structure. As of right
+now, everything should be functional except for
+the rmr. I'm submitting now just in case because
+it's WAY past submission time. I'll hopefully be
+complete before it's due.
+
+I haven't tested for leaks. Also, the ls and lsr
+do not order files lexicographically yet.
+
+Usage:
+   "yshell"
+
+Once in the shell, you can type commands ranging from:
+   # <string>
+      Commented line
+   cat <pathname(s)>
+      Outputs the contents of specified files
+   cd <pathname>
+      Changes directory to the path specified
+   echo <words>
+      Outputs the words typed.
+   ls <pathname>
+      Outputs a file list for the specified directory
+   lsr <pathname>
+      Same as above, but recursively travels (DFS Preorder)
+      through the sub-directories
+   make <pathname> [words]
+      Creates a file at specified pathname. Words are
+      optional, but, if added, fill the file. Existing
+      files are emptied or overwritten.
+   mkdir <pathname>
+      Creates a directory at specified pathname.
+   prompt <string>
+      Sets the prompt to the input string. (Default is "% ")
+   rm <pathname>
+      Removes the specified file or directory (if empty).
+   rmr <pathname> *
+      Recursive removal (DFS Postorder)
+
+* Not yet implemented
+
