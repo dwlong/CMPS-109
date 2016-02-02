@@ -65,12 +65,36 @@ void fn_exit (inode_state& state, const wordvec& words){
    throw ysh_exit();
 }
 
+void ls (inode_state& state, const wordvec& words, bool recur) {
+   if(words.size() == 1) {
+      // Print current directory:
+      state.print_dir(state.get_cwd(), words, recur);
+   } else {
+      // Print specified directory:
+      for(auto itor = words.begin() + 1; 
+             itor != words.end(); ++itor) {
+         inode_ptr dir = nullptr;
+         if(dir != nullptr) {
+            if(dir->is_dir()) {
+               state.print_dir(dir, words, recur);
+            } else {
+               cout << *itor << endl;
+            }
+         }
+      }
+   }
+}
+
 void fn_ls (inode_state& state, const wordvec& words){
+   ls(state, words, false);
+   
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
 
 void fn_lsr (inode_state& state, const wordvec& words){
+   ls(state, words, true);
+   
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
@@ -91,6 +115,8 @@ void fn_prompt (inode_state& state, const wordvec& words){
 }
 
 void fn_pwd (inode_state& state, const wordvec& words){
+   cout << state.pwd() << endl;
+
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }

@@ -25,6 +25,9 @@ class plain_file;
 class directory;
 using inode_ptr = shared_ptr<inode>;
 using base_file_ptr = shared_ptr<base_file>;
+using plain_file_ptr = shared_ptr<plain_file>;
+using directory_ptr = shared_ptr<directory>;
+
 ostream& operator<< (ostream&, file_type);
 
 
@@ -44,14 +47,17 @@ class inode_state {
       string prompt_ {"% "};
    public:
       inode_state();
-      // Getter functions
+      // Getter methods
       const string& prompt();
       inode_ptr get_root();
       inode_ptr get_cwd();
-      // Setter functions
+      // Setter methods
       void set_prompt(const string&);
       void set_root(inode_ptr);
       void set_cwd(inode_ptr);
+      // Other methods
+      string pwd();
+      void print_dir(inode_ptr, const wordvec&, bool);
 };
 
 // class inode -
@@ -73,9 +79,13 @@ class inode {
       static int next_inode_nr;
       int inode_nr;
       base_file_ptr contents;
+      file_type type;
    public:
       inode (file_type);
       int get_inode_nr() const;
+      bool is_plain();
+      bool is_dir();
+      base_file_ptr get_contents() const;
 };
 
 
@@ -104,6 +114,9 @@ class base_file {
       virtual void remove (const string& filename) = 0;
       virtual inode_ptr mkdir (const string& dirname) = 0;
       virtual inode_ptr mkfile (const string& filename) = 0;
+      virtual wordvec get_data() const = 0;
+      virtual inode_ptr get_dirent(string) const = 0;
+      virtual string get_name(int) const = 0;
 };
 
 
@@ -126,6 +139,9 @@ class plain_file: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual wordvec get_data() const override;
+      virtual inode_ptr get_dirent(string) const override;
+      virtual string get_name(int) const override;
 };
 
 // class directory -
@@ -157,6 +173,9 @@ class directory: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual wordvec get_data() const override;
+      virtual inode_ptr get_dirent(string) const override;
+      virtual string get_name(int) const override;
 };
 
 #endif

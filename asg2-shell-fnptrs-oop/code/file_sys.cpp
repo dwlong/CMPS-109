@@ -28,6 +28,10 @@ ostream& operator<< (ostream& out, file_type type) {
    return out << hash[type];
 }
 
+/**
+ * Inode State
+ */
+
 inode_state::inode_state() {
    DEBUGF ('i', "root = " << root << ", cwd = " << cwd
           << ", prompt = \"" << prompt() << "\"");
@@ -36,6 +40,24 @@ inode_state::inode_state() {
 const string& inode_state::prompt() { return prompt_; }
 inode_ptr inode_state::get_root() { return root; }
 inode_ptr inode_state::get_cwd() { return cwd; }
+
+string inode_state::pwd() {
+   inode_ptr curr = cwd;
+   string pwd = "";
+   // Loop finding file names until it hits root
+   while(curr != root) {
+      base_file_ptr dir = curr->get_contents();
+      int inode_nr = dir->get_dirent(".")->get_inode_nr();
+      curr = dir->get_dirent(".."); // Parent dir
+      dir = curr->get_contents();
+      pwd = dir->get_name(inode_nr) + pwd;
+   }
+   return "/" + pwd;
+}
+
+void inode_state::print_dir(inode_ptr dir, const wordvec& words, bool recur) {
+   
+}
 
 void inode_state::set_prompt(const string& prompt) { 
   prompt_ = prompt;
@@ -53,7 +75,12 @@ ostream& operator<< (ostream& out, const inode_state& state) {
    return out;
 }
 
+/**
+ * Inode
+ */
+
 inode::inode(file_type type): inode_nr (next_inode_nr++) {
+   this->type = type;
    switch (type) {
       case file_type::PLAIN_TYPE:
            contents = make_shared<plain_file>();
@@ -69,6 +96,22 @@ int inode::get_inode_nr() const {
    DEBUGF ('i', "inode = " << inode_nr);
    return inode_nr;
 }
+
+base_file_ptr inode::get_contents() const {
+   return contents;
+}
+
+bool inode::is_plain() {
+   return type == file_type::PLAIN_TYPE;
+}
+
+bool inode::is_dir() { 
+   return type == file_type::DIRECTORY_TYPE; 
+}
+
+/**
+ * Files
+ */
 
 
 file_error::file_error (const string& what):
@@ -102,6 +145,22 @@ inode_ptr plain_file::mkfile (const string&) {
    throw file_error ("is a plain file");
 }
 
+wordvec plain_file::get_data() const {
+   return data;
+}
+
+inode_ptr plain_file::get_dirent(string) const {
+   throw file_error ("is a plain file");
+}
+
+string plain_file::get_name(int) const {
+   throw file_error ("is a plain file");
+}
+
+/**
+ * Directories
+ */
+
 
 size_t directory::size() const {
    size_t size {0};
@@ -128,6 +187,21 @@ inode_ptr directory::mkdir (const string& dirname) {
 
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
+   return nullptr;
+}
+
+wordvec directory::get_data() const {
+   throw file_error ("is a directory");
+}
+
+inode_ptr directory::get_dirent(string key) const {
+   return dirents.at(key);
+}
+
+string directory::get_name(int inode_nr) const {
+   for(auto itor = dirents.begin(); itor != dirents.end(); ++itor)
+      if(itor->second->get_inode_nr() == inode_nr)
+         return itor->first;
    return nullptr;
 }
 
