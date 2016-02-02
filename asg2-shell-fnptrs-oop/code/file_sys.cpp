@@ -73,7 +73,7 @@ inode_ptr inode_state::find(const string& dir,
 
    inode_ptr curr = cwd;
    wordvec file_path = split(dir, "/"); 
-   
+   string last = "";
    for(auto itor = file_path.begin();
          itor != file_path.end() - new_node; ++itor) {
       if(!curr->is_dir())
@@ -83,7 +83,11 @@ inode_ptr inode_state::find(const string& dir,
       if(!dir->has_dirent(*itor))
          throw file_error(*itor + " does not exist");
       curr = dir->get_dirent(*itor);
+      last = *itor;
    }
+   
+   if(new_node && !curr->is_dir())
+      throw file_error(last + " is not a directory");
    
    return curr;
 }
@@ -177,6 +181,9 @@ const wordvec& plain_file::readfile() const {
 }
 
 void plain_file::writefile (const wordvec& words) {
+   data.clear();
+   for(auto itor = words.begin(); itor != words.end(); ++itor)
+      data.push_back(*itor);
    DEBUGF ('i', words);
 }
 
@@ -190,10 +197,6 @@ inode_ptr plain_file::mkdir (const string&) {
 
 inode_ptr plain_file::mkfile (const string&) {
    throw file_error ("is a plain file");
-}
-
-wordvec plain_file::get_data() const {
-   return data;
 }
 
 bool plain_file::has_dirent(const string&) const {
@@ -256,12 +259,13 @@ inode_ptr directory::mkdir (const string& dirname) {
 }
 
 inode_ptr directory::mkfile (const string& filename) {
-   DEBUGF ('i', filename);
-   return nullptr;
-}
+   if(has_dirent(filename))
+      return get_dirent(filename);
+   inode_ptr file = make_shared<inode>(file_type::PLAIN_TYPE);
+   dirents.insert(pair<string, inode_ptr>(filename, file));
 
-wordvec directory::get_data() const {
-   throw file_error ("is a directory");
+   DEBUGF ('i', filename);
+   return file;
 }
 
 bool directory::has_dirent(const string& key) const {

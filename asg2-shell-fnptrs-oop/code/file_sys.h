@@ -116,7 +116,6 @@ class base_file {
       virtual void remove (const string& filename) = 0;
       virtual inode_ptr mkdir (const string& dirname) = 0;
       virtual inode_ptr mkfile (const string& filename) = 0;
-      virtual wordvec get_data() const = 0;
       virtual bool has_dirent(const string&) const = 0;
       virtual inode_ptr get_dirent(const string&) const = 0;
       virtual string get_name(const int&) const = 0;
@@ -144,7 +143,6 @@ class plain_file: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
-      virtual wordvec get_data() const override;
       virtual bool has_dirent(const string&) const override;
       virtual inode_ptr get_dirent(const string&) const override;
       virtual string get_name(const int&) const override;
@@ -181,7 +179,6 @@ class directory: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
-      virtual wordvec get_data() const override;
       virtual bool has_dirent(const string&) const override;
       virtual inode_ptr get_dirent(const string&) const override;
       virtual string get_name(const int&) const override;
