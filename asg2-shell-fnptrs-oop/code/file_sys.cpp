@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <unordered_map>
+#include <iomanip>
 
 using namespace std;
 
@@ -33,6 +34,10 @@ ostream& operator<< (ostream& out, file_type type) {
  */
 
 inode_state::inode_state() {
+   root = make_shared<inode>(file_type::DIRECTORY_TYPE);
+   root->get_contents()->init_dir(root, root);
+   cwd = root;
+
    DEBUGF ('i', "root = " << root << ", cwd = " << cwd
           << ", prompt = \"" << prompt() << "\"");
 }
@@ -41,8 +46,7 @@ const string& inode_state::prompt() { return prompt_; }
 inode_ptr inode_state::get_root() { return root; }
 inode_ptr inode_state::get_cwd() { return cwd; }
 
-string inode_state::pwd() {
-   inode_ptr curr = cwd;
+string inode_state::pwd(inode_ptr curr) {
    string pwd = "";
    // Loop finding file names until it hits root
    while(curr != root) {
@@ -55,8 +59,12 @@ string inode_state::pwd() {
    return "/" + pwd;
 }
 
-void inode_state::print_dir(inode_ptr dir, const wordvec& words, bool recur) {
-   
+void inode_state::ls(inode_ptr node, bool recur) {
+   if(node == nullptr) return;
+   cout << pwd(node) << ":" << endl;
+
+   base_file_ptr dir = node->get_contents();
+   dir->print_contents(recur);
 }
 
 void inode_state::set_prompt(const string& prompt) { 
@@ -157,13 +165,22 @@ string plain_file::get_name(int) const {
    throw file_error ("is a plain file");
 }
 
+void plain_file::print_contents(bool) {
+   throw file_error ("is a plain file");
+   // Replace later with readfile loop?
+}
+
+void plain_file::init_dir(inode_ptr, inode_ptr) {
+   throw file_error ("is a plain file");
+}
+
 /**
  * Directories
  */
 
 
 size_t directory::size() const {
-   size_t size {0};
+   size_t size {dirents.size()};
    DEBUGF ('i', "size = " << size);
    return size;
 }
@@ -199,9 +216,39 @@ inode_ptr directory::get_dirent(string key) const {
 }
 
 string directory::get_name(int inode_nr) const {
-   for(auto itor = dirents.begin(); itor != dirents.end(); ++itor)
+   for(auto itor = dirents.begin(); 
+         itor != dirents.end(); ++itor)
       if(itor->second->get_inode_nr() == inode_nr)
          return itor->first;
    return nullptr;
+}
+
+void directory::print_contents(bool recur) {
+   for(auto itor = dirents.begin(); 
+      itor != dirents.end(); ++itor) {
+      
+      string name = itor->first;
+      inode_ptr node = itor->second;
+      cout << setw(6) << node->get_inode_nr() << "  "
+           << setw(6) << node->get_contents()->size()
+           << "  " << name << ((node->is_dir() 
+           && name != "." && name != "..")? "/": "")
+           << endl;
+   }
+   if(recur) {
+      for(auto itor = dirents.begin();
+         itor != dirents.end(); ++itor) {
+         if(itor->first != "." && itor->first != ".."
+            && itor->second->is_dir()) {
+            base_file_ptr dir = itor->second->get_contents();
+            dir->print_contents(true);
+         }
+      }
+   }
+}
+
+void directory::init_dir(inode_ptr par, inode_ptr self) {
+   dirents.insert(pair<string,inode_ptr>(".", self));
+   dirents.insert(pair<string,inode_ptr>("..", par));
 }
 
