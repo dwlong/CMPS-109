@@ -44,7 +44,14 @@ class inode_state {
       string prompt_ {"% "};
    public:
       inode_state();
+      // Getter functions
       const string& prompt();
+      inode_ptr get_root();
+      inode_ptr get_cwd();
+      // Setter functions
+      void set_prompt(const string&);
+      void set_root(inode_ptr);
+      void set_cwd(inode_ptr);
 };
 
 // class inode -

@@ -34,6 +34,18 @@ inode_state::inode_state() {
 }
 
 const string& inode_state::prompt() { return prompt_; }
+inode_ptr inode_state::get_root() { return root; }
+inode_ptr inode_state::get_cwd() { return cwd; }
+
+void inode_state::set_prompt(const string& prompt) { 
+  prompt_ = prompt;
+}
+void inode_state::set_root(inode_ptr newroot) { 
+  root = newroot;
+}
+void inode_state::set_cwd(inode_ptr newcwd) { 
+  cwd = newcwd;
+}
 
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
