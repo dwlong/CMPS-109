@@ -57,7 +57,9 @@ class inode_state {
       void set_cwd(inode_ptr);
       // Other methods
       string pwd(inode_ptr);
-      void ls(inode_ptr, bool);
+      void ls(inode_state&, inode_ptr, bool);
+      inode_ptr find(const string&, const int&);
+      void cd(const string&);
 };
 
 // class inode -
@@ -115,9 +117,10 @@ class base_file {
       virtual inode_ptr mkdir (const string& dirname) = 0;
       virtual inode_ptr mkfile (const string& filename) = 0;
       virtual wordvec get_data() const = 0;
-      virtual inode_ptr get_dirent(string) const = 0;
-      virtual string get_name(int) const = 0;
-      virtual void print_contents(bool) = 0;
+      virtual bool has_dirent(const string&) const = 0;
+      virtual inode_ptr get_dirent(const string&) const = 0;
+      virtual string get_name(const int&) const = 0;
+      virtual void print_contents(inode_state&, const bool&) = 0;
       virtual void init_dir(inode_ptr, inode_ptr) = 0;
 };
 
@@ -142,9 +145,10 @@ class plain_file: public base_file {
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
       virtual wordvec get_data() const override;
-      virtual inode_ptr get_dirent(string) const override;
-      virtual string get_name(int) const override;
-      virtual void print_contents(bool) override;
+      virtual bool has_dirent(const string&) const override;
+      virtual inode_ptr get_dirent(const string&) const override;
+      virtual string get_name(const int&) const override;
+      virtual void print_contents(inode_state&, const bool&) override;
       virtual void init_dir(inode_ptr, inode_ptr) override;
 };
 
@@ -178,9 +182,10 @@ class directory: public base_file {
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
       virtual wordvec get_data() const override;
-      virtual inode_ptr get_dirent(string) const override;
-      virtual string get_name(int) const override;
-      virtual void print_contents(bool) override;
+      virtual bool has_dirent(const string&) const override;
+      virtual inode_ptr get_dirent(const string&) const override;
+      virtual string get_name(const int&) const override;
+      virtual void print_contents(inode_state&, const bool&) override;
       virtual void init_dir(inode_ptr, inode_ptr) override;
 };
 

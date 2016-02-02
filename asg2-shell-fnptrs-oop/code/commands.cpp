@@ -48,6 +48,18 @@ void fn_cat (inode_state& state, const wordvec& words){
 }
 
 void fn_cd (inode_state& state, const wordvec& words){
+   if(words.size() > 2)
+      throw command_error("cd: too many arguments");
+   
+   try{
+      if(words.size() == 1) {
+         state.cd("/");
+      } else {
+         state.cd(words.at(1));
+      }
+   } catch (file_error& error) {
+      complain() << error.what() << endl;
+   }
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
@@ -68,17 +80,21 @@ void fn_exit (inode_state& state, const wordvec& words){
 void ls (inode_state& state, const wordvec& words, bool recur) {
    if(words.size() == 1) {
       // Print current directory:
-      state.ls(state.get_cwd(), recur);
+      state.ls(state, state.get_cwd(), recur);
    } else {
       // Print specified directory:
       for(auto itor = words.begin() + 1; 
              itor != words.end(); ++itor) {
-         inode_ptr node = nullptr;
-         if(node != nullptr) {
-            if(node->is_dir())
-               state.ls(node, recur);
-            else
-               cout << *itor << endl;
+         try {
+            inode_ptr node = state.find(*itor, 0);
+            if(node != nullptr) {
+               if(node->is_dir())
+                  state.ls(state, node, recur);
+               else
+                  cout << *itor << endl;
+            }
+         } catch (file_error& error) {
+            complain() << error.what() << endl;
          }
       }
    }
@@ -104,6 +120,20 @@ void fn_make (inode_state& state, const wordvec& words){
 }
 
 void fn_mkdir (inode_state& state, const wordvec& words){
+   if(words.size() == 1)
+      throw command_error("mkdir: no name");
+   if(words.size() > 2)
+      throw command_error("mkdir: too many args");
+   
+   try {
+      inode_ptr node = state.find(words.at(1), 1);
+      wordvec path = split(words.at(1), "/");
+      base_file_ptr dir = node->get_contents();
+      dir->mkdir(path.back());
+   } catch (file_error& error) {
+      complain() << error.what() << endl;
+   }
+   
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }

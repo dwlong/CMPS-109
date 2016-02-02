@@ -54,18 +54,55 @@ string inode_state::pwd(inode_ptr curr) {
       int inode_nr = dir->get_dirent(".")->get_inode_nr();
       curr = dir->get_dirent(".."); // Parent dir
       dir = curr->get_contents();
-      pwd = dir->get_name(inode_nr) + pwd;
+      pwd = "/" + dir->get_name(inode_nr) + pwd;
    }
-   return "/" + pwd;
+   return pwd;
 }
 
-void inode_state::ls(inode_ptr node, bool recur) {
+void inode_state::ls(inode_state& state, inode_ptr node, bool recur) {
    if(node == nullptr) return;
    cout << pwd(node) << ":" << endl;
-
    base_file_ptr dir = node->get_contents();
-   dir->print_contents(recur);
+   dir->print_contents(state, recur);
 }
+
+inode_ptr inode_state::find(const string& dir,
+                            const int& new_node) {
+   if(dir == "/")
+      return root;
+
+   inode_ptr curr = cwd;
+   wordvec file_path = split(dir, "/"); 
+   
+   for(auto itor = file_path.begin();
+         itor != file_path.end() - new_node; ++itor) {
+      if(!curr->is_dir())
+         throw file_error(*itor + " is not a directory");
+      
+      base_file_ptr dir = curr->get_contents();
+      if(!dir->has_dirent(*itor))
+         throw file_error(*itor + " does not exist");
+      curr = dir->get_dirent(*itor);
+   }
+   
+   return curr;
+}
+
+void inode_state::cd(const string& path) {
+   if(path == "/") {
+      cwd = root;
+      return;
+   }
+   
+   inode_ptr node = find(path, 0);
+
+   if(!node->is_dir())
+      throw file_error("cd: targetted a plain_file");
+   
+   cwd = node;
+}
+
+
 
 void inode_state::set_prompt(const string& prompt) { 
   prompt_ = prompt;
@@ -76,6 +113,8 @@ void inode_state::set_root(inode_ptr newroot) {
 void inode_state::set_cwd(inode_ptr newcwd) { 
   cwd = newcwd;
 }
+
+
 
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
@@ -157,21 +196,28 @@ wordvec plain_file::get_data() const {
    return data;
 }
 
-inode_ptr plain_file::get_dirent(string) const {
+bool plain_file::has_dirent(const string&) const {
    throw file_error ("is a plain file");
 }
 
-string plain_file::get_name(int) const {
+inode_ptr plain_file::get_dirent(const string&) const {
    throw file_error ("is a plain file");
 }
 
-void plain_file::print_contents(bool) {
+string plain_file::get_name(const int&) const {
    throw file_error ("is a plain file");
+}
+
+void plain_file::print_contents(inode_state& state, const bool&) {
+   throw file_error ("is a plain file");
+   cout << state << endl; // Yah fight me warning messages
    // Replace later with readfile loop?
 }
 
-void plain_file::init_dir(inode_ptr, inode_ptr) {
+void plain_file::init_dir(inode_ptr a, inode_ptr b) {
    throw file_error ("is a plain file");
+   auto temp = a;
+   temp = b;
 }
 
 /**
@@ -198,8 +244,15 @@ void directory::remove (const string& filename) {
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
+   if(dirents.count(dirname) == 1)
+      throw file_error ("mkdir: directory exists");
+   
+   inode_ptr dir = make_shared<inode>(file_type::DIRECTORY_TYPE);
+   dir->get_contents()->init_dir(dirents.at("."), dir);
+   dirents.insert(pair<string, inode_ptr>(dirname, dir));
+   
    DEBUGF ('i', dirname);
-   return nullptr;
+   return dir;
 }
 
 inode_ptr directory::mkfile (const string& filename) {
@@ -211,11 +264,17 @@ wordvec directory::get_data() const {
    throw file_error ("is a directory");
 }
 
-inode_ptr directory::get_dirent(string key) const {
-   return dirents.at(key);
+bool directory::has_dirent(const string& key) const {
+   return dirents.count(key) != 0;
 }
 
-string directory::get_name(int inode_nr) const {
+inode_ptr directory::get_dirent(const string& key) const {
+   if(dirents.count(key) != 0)
+      return dirents.at(key);
+   throw file_error(key + ": does not exist");
+}
+
+string directory::get_name(const int& inode_nr) const {
    for(auto itor = dirents.begin(); 
          itor != dirents.end(); ++itor)
       if(itor->second->get_inode_nr() == inode_nr)
@@ -223,7 +282,7 @@ string directory::get_name(int inode_nr) const {
    return nullptr;
 }
 
-void directory::print_contents(bool recur) {
+void directory::print_contents(inode_state& state, const bool& recur) {
    for(auto itor = dirents.begin(); 
       itor != dirents.end(); ++itor) {
       
@@ -241,7 +300,8 @@ void directory::print_contents(bool recur) {
          if(itor->first != "." && itor->first != ".."
             && itor->second->is_dir()) {
             base_file_ptr dir = itor->second->get_contents();
-            dir->print_contents(true);
+            cout << state.pwd(itor->second) << ":" << endl;
+            dir->print_contents(state, true);
          }
       }
    }
