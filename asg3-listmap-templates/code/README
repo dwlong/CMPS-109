@@ -1,0 +1,42 @@
+James Garbagnati
+jgarbagn
+1354722
+
+asg3-listmap-templates
+
+keyvalue
+
+   The keyvalue program effectively just manages
+   a linked list of keys and values. Everything
+   should be functional. The skecthiest part of
+   the code would probably be the find() function
+   of listmap as I could not get it to work
+   without making it non-const, allowing a programmer
+   more access than he/she needed from the find()
+   function.
+
+   Didn't change the ++ and -- operators of the
+   iterator class as I never needed any of the
+   special functionality from changing them.
+
+Usage:
+   keyvalue [-@ flags] [filename...]
+
+Within the files, input is read as any of the following:
+   # [string]
+      Commented line.
+   key
+      Prints out value found at corresponding key.
+   key =
+      Erases key and value found at key.
+   key = value
+      Replaces or inserts key and value pair in
+      increasing lexicographic order (by key). 
+      Additionally, prints the key and value pair.
+   =
+      Prints every key and value pair in
+      lexicographic order.
+   = value
+      Prints all of the key and value pairs with
+      the given value in lexicographic order.
+
