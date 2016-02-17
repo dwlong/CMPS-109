@@ -118,7 +118,8 @@ int main (int argc, char** argv) {
          ifstream file(argv[i]);
          // Check to see if file exists.
          if(file.fail()) {
-            complain() << argv[i] << ": no such file" << endl;
+            complain() << argv[i] << ": No such file or directory" 
+                       << endl;
             continue;
          }
          keyvalue(listmap, argv[i], file);
