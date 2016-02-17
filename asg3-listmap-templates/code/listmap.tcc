@@ -48,7 +48,7 @@ listmap<Key,Value,Less>::insert (const value_type& pair) {
    TRACE ('l', &pair << "->" << pair);
    
    // Obtain position to insert
-   auto itor = begin();
+   iterator itor = begin();
    for(; itor != end(); ++itor) {
       // found where to insert
       if(!less(itor->first, pair.first)) {
@@ -75,15 +75,20 @@ listmap<Key,Value,Less>::insert (const value_type& pair) {
 //
 template <typename Key, typename Value, class Less>
 typename listmap<Key,Value,Less>::iterator
-listmap<Key,Value,Less>::find (const key_type& that) const {
+listmap<Key,Value,Less>::find (const key_type& that) {
    TRACE ('l', that);
    
    // If found, return, otherwise exit and return the end
-   auto itor = begin();
-   for(; itor != end(); ++itor)
-      if(itor->first == that)
-         return itor;
-
+   iterator itor = begin();
+   for(; itor != end(); ++itor) {
+      if(!less(itor->first, that)) {
+         if(!less(that, itor->first)) {
+            return itor;
+         }
+         break;
+      }
+   }
+   
    return end();
 }
 
