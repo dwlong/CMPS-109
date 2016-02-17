@@ -1,4 +1,7 @@
 // $Id: util.tcc,v 1.3 2014-06-27 17:49:07-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <sstream>
 #include <typeinfo>

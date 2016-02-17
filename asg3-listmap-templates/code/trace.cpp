@@ -1,4 +1,7 @@
 // $Id: trace.cpp,v 1.3 2014-05-29 19:20:19-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <climits>
 #include <iostream>

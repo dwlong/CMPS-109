@@ -1,4 +1,7 @@
 // $Id: main.cpp,v 1.8 2015-04-28 19:23:13-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #include <cstdlib>
 #include <exception>

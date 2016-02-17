@@ -1,4 +1,7 @@
 // $Id: listmap.h,v 1.11 2015-04-28 19:22:02-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #ifndef __LISTMAP_H__
 #define __LISTMAP_H__

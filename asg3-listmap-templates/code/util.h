@@ -1,4 +1,7 @@
 // $Id: util.h,v 1.4 2015-02-11 13:03:38-08 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 //
 // util -

@@ -1,4 +1,7 @@
 // $Id: xpair.h,v 1.4 2014-06-27 17:39:08-07 - - $
+// James Garbagnati
+// jgarbagn
+// 1354722
 
 #ifndef __XPAIR_H__
 #define __XPAIR_H__

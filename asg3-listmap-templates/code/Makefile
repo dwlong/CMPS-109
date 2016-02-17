@@ -1,4 +1,7 @@
 # $Id: Makefile,v 1.11 2016-01-28 15:52:30-08 - - $
+# James Garbagnati
+# jgarbagn
+# 1354722
 
 # By default, gmake sets the variable ${CXX}=g++ on a Linux system.
 # To use Sun Studio C++ (CC), set the variable CXX=CC, either on
