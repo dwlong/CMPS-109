@@ -1,4 +1,4 @@
-// $Id: util.tcc,v 1.3 2014-06-27 17:49:07-07 - - $
+// $Id: util.tcc,v 1.1 2016-02-17 02:16:28-08 - - $
 // James Garbagnati
 // jgarbagn
 // 1354722
