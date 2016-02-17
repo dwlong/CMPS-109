@@ -80,3 +80,12 @@ void syscall_error (const string& object) {
    complain() << object << ": " << strerror (errno) << endl;
 }
 
+string trim(const string& str) {
+   auto pos = str.find_first_not_of(" \t");
+   // Empty or pure whitespace string
+   if(pos == string::npos)
+      return "";
+   auto len = 1 + str.find_last_not_of(" \t") - pos;
+   return str.substr(pos, len);
+}
+

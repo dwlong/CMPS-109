@@ -104,6 +104,12 @@ string to_string (const item_t&);
 template <typename item_t>
 item_t from_string (const string&);
 
+// 
+// string trim(const string& str) {
+//    Removes the string's leading and trailing whitespace.
+// 
+string trim(const string&);
+
 //
 // Put the RCS Id string in the object file.
 //
